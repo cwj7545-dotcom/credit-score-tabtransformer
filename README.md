@@ -1,7 +1,5 @@
 # TabTransformer 기반 신용점수 분류 모델 개선 프로젝트
 
-# TabTransformer 기반 신용점수 분류 모델 개선 프로젝트
-
 ## 1. 프로젝트 개요
 
 본 프로젝트는 고객의 금융 정보를 기반으로 `Credit_Score`를 `Good`, `Poor`, `Standard` 3개 클래스로 분류하는 딥러닝 기반 다중분류 프로젝트입니다.
