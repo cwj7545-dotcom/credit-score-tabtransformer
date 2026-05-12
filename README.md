@@ -1,5 +1,7 @@
 # TabTransformer 기반 신용점수 분류 모델 개선 프로젝트
 
+# TabTransformer 기반 신용점수 분류 모델 개선 프로젝트
+
 ## 1. 프로젝트 개요
 
 본 프로젝트는 고객의 금융 정보를 기반으로 `Credit_Score`를 `Good`, `Poor`, `Standard` 3개 클래스로 분류하는 딥러닝 기반 다중분류 프로젝트입니다.
@@ -32,17 +34,21 @@
 `Credit_Score`는 `Standard` 클래스 비중이 가장 높고, `Good` 클래스 비중이 가장 낮았습니다.  
 따라서 단순 Accuracy만으로 평가할 경우 다수 클래스 중심으로 성능이 해석될 수 있으므로, Macro F1-score를 함께 확인했습니다.
 
-![Target Distribution](images/01_target_distribution.png)
+![Target Distribution](./01_target_distribution.png)
 
 ---
 
 ### 3.2 Type_of_Loan 분석
 
-`Type_of_Loan`은 고유값이 6,261개로 매우 많은 복합 범주형 변수였습니다. 또한 `No Data` 값이 11,408개 존재하여, pandas의 `isna()`로는 잡히지 않는 문자열형 미기재 값이 포함되어 있음을 확인했습니다.
+`Type_of_Loan`은 고유값이 6,261개로 매우 많은 복합 범주형 변수였습니다.  
+이는 단순 LabelEncoding 방식보다 embedding 기반 범주형 처리가 더 적합하다고 판단한 근거가 되었습니다.
 
-![Type of Loan Unique](images/02_type_of_loan_unique.png)
+![Type of Loan Unique](./02_type_of_loan_unique.png)
 
-![No Data Distribution](images/03_no_data_distribution.png)
+또한 `Type_of_Loan`에는 `No Data` 값이 11,408개 존재했습니다.  
+이는 pandas의 `isna()`로는 잡히지 않는 문자열형 미기재 값입니다.
+
+![No Data Distribution](./03_no_data_distribution.png)
 
 `No Data`는 비중이 작지 않기 때문에 단순 삭제하지 않고, 원본 범주형 값으로 유지했습니다.
 
@@ -52,7 +58,7 @@
 
 `Credit_Mix`, `Payment_of_Min_Amount`, `Payment_Behaviour` 등은 `Credit_Score`별 분포 차이가 뚜렷하게 나타났습니다.
 
-![Categorical Target Ratio](images/04_categorical_target_ratio.png)
+![Categorical Target Ratio](./04_categorical_target_ratio.png)
 
 따라서 주요 범주형 변수는 제거하지 않고 모델 입력에 포함했습니다.
 
@@ -98,5 +104,6 @@ Categorical Embedding
 → Numeric Block
 → Concatenate
 → Fully Connected Classifier
+
 
 데이터 출처: Kaggle - Credit Score Classification Dataset
