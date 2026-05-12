@@ -29,7 +29,8 @@
 
 ### 3.1 Target 분포 확인
 
-`Credit_Score`는 `Standard` 클래스 비중이 가장 높고, `Good` 클래스 비중이 가장 낮았습니다.  
+`Credit_Score`는 `Standard` 클래스 비중이 가장 높고, `Good` 클래스 비중이 가장 낮았습니다.
+
 따라서 단순 Accuracy만으로 평가할 경우 다수 클래스 중심으로 성능이 해석될 수 있으므로, Macro F1-score를 함께 확인했습니다.
 
 ![Target Distribution](./01_target_distribution.png)
@@ -38,12 +39,14 @@
 
 ### 3.2 Type_of_Loan 분석
 
-`Type_of_Loan`은 고유값이 6,261개로 매우 많은 복합 범주형 변수였습니다.  
+`Type_of_Loan`은 고유값이 6,261개로 매우 많은 복합 범주형 변수였습니다.
+
 이는 단순 LabelEncoding 방식보다 embedding 기반 범주형 처리가 더 적합하다고 판단한 근거가 되었습니다.
 
 ![Type of Loan Unique](./02_type_of_loan_unique.png)
 
-또한 `Type_of_Loan`에는 `No Data` 값이 11,408개 존재했습니다.  
+또한 `Type_of_Loan`에는 `No Data` 값이 11,408개 존재했습니다.
+
 이는 pandas의 `isna()`로는 잡히지 않는 문자열형 미기재 값입니다.
 
 ![No Data Distribution](./03_no_data_distribution.png)
@@ -81,7 +84,8 @@
 
 ### 5.1 Baseline: MLP
 
-초기 기준 모델로 MLP를 사용했습니다.  
+초기 기준 모델로 MLP를 사용했습니다.
+
 범주형 변수는 LabelEncoding을 통해 수치화한 뒤 수치형 변수와 함께 입력했습니다.
 
 하지만 `Type_of_Loan`처럼 고유값이 많은 범주형 변수는 LabelEncoding으로 처리할 경우 범주 간 순서가 있는 것처럼 모델이 오해할 수 있습니다. 따라서 MLP는 기준 모델로만 사용했습니다.
@@ -96,12 +100,11 @@ TabTransformer는 범주형 변수를 embedding으로 변환한 뒤 Transformer 
 
 모델 구조는 다음과 같습니다.
 
-```text
-Categorical Embedding
-→ Transformer Encoder
-→ Numeric Block
-→ Concatenate
-→ Fully Connected Classifier
+- Categorical Embedding
+- Transformer Encoder
+- Numeric Block
+- Concatenate
+- Fully Connected Classifier
 
 ---
 
@@ -129,16 +132,39 @@ Categorical Embedding
 
 ![Confusion Matrix](./07_confusion_matrix.png)
 
+최종 모델은 `Good`, `Poor`, `Standard` 세 클래스에서 비교적 균형 잡힌 성능을 보였습니다.
+
+특히 Macro F1을 함께 확인함으로써 클래스 불균형 상황에서도 특정 클래스에만 치우치지 않았는지 평가했습니다.
+
 ---
 
 ## 8. 최종 모델 선택
 
 최종 모델은 다음 조합으로 선택했습니다.
 
-```text
-TabTransformer
-+ 원본 변수만 사용
-+ StandardScaler
-+ alpha=0.5 class weight
+- TabTransformer
+- 원본 변수만 사용
+- StandardScaler
+- alpha=0.5 class weight
+
+선별 파생변수 5개를 추가한 모델도 실험했지만, validation score가 원본 변수 모델보다 낮게 나타났습니다.
+
+따라서 파생변수는 금융적으로 해석 가능한 시도였지만, 현재 모델에서는 기존 원본 변수와 정보가 중복되거나 일부 클래스에서 노이즈로 작용한 것으로 판단했습니다.
+
+최종적으로 원본 변수만 사용한 TabTransformer 모델이 Accuracy 0.83465, Macro F1 0.83110으로 가장 높은 validation score를 기록했습니다.
+
+---
+
+## 9. 프로젝트를 통해 얻은 점
+
+- pandas `isna()`로 잡히지 않는 문자열형 미기재 값도 EDA에서 반드시 확인해야 한다.
+- 고유값이 많은 범주형 변수는 LabelEncoding보다 embedding 기반 모델이 더 적합할 수 있다.
+- 클래스 불균형이 있는 다중분류 문제에서는 Accuracy뿐 아니라 Macro F1도 함께 확인해야 한다.
+- 파생변수는 무조건 성능을 높이지 않으며, validation score 비교를 통해 최종 채택 여부를 결정해야 한다.
+- 모델 개선은 단순히 복잡한 모델을 쓰는 것이 아니라, EDA 결과와 데이터 구조에 맞는 모델을 선택하는 과정이 중요하다.
+
+---
+
+## 10. 데이터 출처
 
 데이터 출처: Kaggle - Credit Score Classification Dataset
