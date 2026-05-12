@@ -103,5 +103,4 @@ Categorical Embedding
 → Concatenate
 → Fully Connected Classifier
 
-
 데이터 출처: Kaggle - Credit Score Classification Dataset
