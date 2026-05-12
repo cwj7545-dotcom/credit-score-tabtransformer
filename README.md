@@ -103,4 +103,42 @@ Categorical Embedding
 → Concatenate
 → Fully Connected Classifier
 
+---
+
+## 6. 실험 결과
+
+| 실험 | 모델 | 변수 구성 | Scaler | Accuracy | Macro F1 | Weighted F1 |
+|---|---|---|---|---:|---:|---:|
+| Baseline | MLP | LabelEncoding + 원본 변수 | StandardScaler | 약 0.71 | - | - |
+| Exp 1 | TabTransformer | 원본 변수만 사용 | StandardScaler | 0.83465 | 0.83110 | 0.83505 |
+| Exp 2 | TabTransformer | 선별 파생변수 5개 추가 | StandardScaler | 0.83115 | 0.82809 | 0.83158 |
+
+원본 변수만 사용한 TabTransformer 모델이 가장 높은 validation score를 기록했습니다.
+
+![Original Model Score](./05_original_model_score.png)
+
+선별 파생변수 5개를 추가한 모델도 실험했지만, 원본 변수 모델보다 성능이 소폭 낮았습니다.
+
+![Derived Model Score](./06_derived_model_score.png)
+
+---
+
+## 7. Confusion Matrix
+
+최종 선택 모델의 Confusion Matrix입니다.
+
+![Confusion Matrix](./07_confusion_matrix.png)
+
+---
+
+## 8. 최종 모델 선택
+
+최종 모델은 다음 조합으로 선택했습니다.
+
+```text
+TabTransformer
++ 원본 변수만 사용
++ StandardScaler
++ alpha=0.5 class weight
+
 데이터 출처: Kaggle - Credit Score Classification Dataset
